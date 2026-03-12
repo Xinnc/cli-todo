@@ -15,6 +15,17 @@ func LoadTasks() []Task {
 		log.Fatal(err)
 	}
 	defer file.Close()
+
+	stat, err := file.Stat()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if stat.Size() == 0 {
+		file.Write([]byte("[]"))
+		file.Seek(0, 0)
+	}
+
 	var tasks []Task
 	file.Seek(0, 0)
 	if err := json.NewDecoder(file).Decode(&tasks); err != nil {
